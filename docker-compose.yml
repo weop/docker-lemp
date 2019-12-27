@@ -1,0 +1,33 @@
+version: "3"
+services:
+  nginx:
+      container_name: nginx
+      build:
+          context: ./nginx
+      ports:
+          - "8080:80"
+      volumes:
+          - ./app:/var/app
+  fpm:
+      container_name: fpm
+      build:
+          context: ./fpm
+      volumes:
+          - ./app:/var/app
+      expose:
+          - "9000"
+      environment:
+          - "DB_HOST=db"
+          - "DB_DATABASE=laravel"
+  db:
+      container_name: mariadb
+      image: mariadb
+      environment:
+          - MYSQL_ROOT_PASSWORD=secret
+          - MYSQL_DATABASE=laravel
+          - MYSQL_TCP_PORT=33030
+          - MYSQL_UNIX_PORT=33020
+      volumes:
+          - ./database:/var/lib/mysql
+      ports:
+          - "33020:33020"
